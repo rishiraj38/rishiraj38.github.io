@@ -1,0 +1,20 @@
+/* cosmos: real deep-space backdrop. Everything lives inside the fixed, overflow-hidden .sky layer
+   (z-index 0, pointer-events none), so it can never cover content, catch the pointer or widen the page. */
+
+/* true black space: retire the coloured gradient haze */
+.sky .neb{display:none}
+
+/* photographic layers sit under the star canvas; black in the photos vanishes through screen blending */
+.cosmos-photos{position:absolute;inset:0;overflow:hidden;pointer-events:none;contain:strict}
+.cosmos-deep{position:absolute;inset:-12%;background:url(assets/cosmos/deepfield.webp) center/cover;opacity:0;transition:opacity 1.6s ease;backface-visibility:hidden}
+.cosmos-deep.is-in{opacity:.2}
+.cosmos-obj{position:absolute;left:0;top:0;display:block;max-width:none;height:auto;mix-blend-mode:screen;opacity:0;visibility:hidden;
+  pointer-events:none;user-select:none;-webkit-user-drag:none;backface-visibility:hidden;transform-origin:50% 50%}
+.cosmos-obj.is-near{will-change:transform,opacity}
+
+/* meteors, asteroids, belt, dust: one shared canvas above the stars */
+.sky #cosmos-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* a soft floor of darkness behind long text runs is not needed: the layers themselves are kept dim.
+   Reduced motion: no transitions (the page already kills animations globally). */
+@media (prefers-reduced-motion:reduce){.cosmos-deep{transition:none}}

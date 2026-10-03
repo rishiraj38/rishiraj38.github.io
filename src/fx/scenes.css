@@ -1,0 +1,72 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Space scenes: three decorative, full-bleed animated interludes.
+     #scene-1  black hole (WebGL ray-marched lensing)
+     #scene-2  astronaut, ISS and Hubble over the Earth limb (photo parallax)
+     #scene-3  scroll-driven rocket launch (canvas particles)
+   All markup is created by fx/scenes.js. Nothing here is interactive.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+#scene-1,#scene-2,#scene-3{
+  position:relative;overflow:hidden;pointer-events:none;user-select:none;
+  contain:layout paint;isolation:isolate;
+  /* dissolve into the page instead of ending on a hard rectangle */
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 80%,transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 20%,#000 80%,transparent 100%);
+}
+/* true full-bleed: scenes.js publishes the scrollbar-free viewport width as --scene-w */
+html.sc-bleed #scene-1,html.sc-bleed #scene-2,html.sc-bleed #scene-3{
+  width:var(--scene-w);margin-inline:0;margin-left:calc(50% - var(--scene-w) / 2);
+}
+#scene-1{height:clamp(400px,88vh,880px)}
+#scene-2{height:clamp(440px,86vh,840px)}
+#scene-3{height:clamp(480px,92vh,920px)}
+@media (max-width:700px){
+  #scene-1{height:clamp(340px,64vh,540px)}
+  #scene-2{height:clamp(380px,68vh,580px)}
+  #scene-3{height:clamp(420px,74vh,640px)}
+}
+.scene canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* ── 1 · black hole ───────────────────────────────────────────────────────── */
+#scene-1 canvas{opacity:0;transition:opacity 1.4s ease}
+#scene-1.sc-ready canvas{opacity:1}
+/* no-WebGL fallback: a still, CSS-only hole with a tilted accretion ring */
+#scene-1.sc-nogl::before,#scene-1.sc-nogl::after{content:"";position:absolute;left:50%;top:50%;border-radius:50%}
+#scene-1.sc-nogl::before{
+  width:min(78vw,720px);height:min(78vw,720px);margin:calc(min(78vw,720px) / -2);
+  background:radial-gradient(closest-side,transparent 0 22%,#FFF3DC 23.5%,#FFB347 30%,rgba(214,74,34,.75) 46%,rgba(139,108,255,.3) 68%,transparent 86%);
+  transform:rotate(-14deg) scaleY(.2);filter:blur(3px);
+}
+#scene-1.sc-nogl::after{
+  width:min(22vw,200px);height:min(22vw,200px);margin:calc(min(22vw,200px) / -2);
+  background:#000;box-shadow:0 0 0 2px rgba(255,236,200,.85),0 0 46px 10px rgba(255,179,71,.5);
+}
+
+/* ── 2 · astronaut + station over the Earth limb ──────────────────────────── */
+#scene-2 .s2-layer{position:absolute;will-change:transform;backface-visibility:hidden}
+#scene-2 .s2-back{
+  inset:-9% -5%;background:#04050D url(assets/scenes/earth-limb.webp) 50% 62%/cover no-repeat;
+}
+/* tint the photo toward the page palette and sink its corners into --space */
+#scene-2 .s2-grade{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(120% 90% at 50% 55%,transparent 45%,rgba(4,5,13,.72) 100%),
+    linear-gradient(115deg,rgba(139,108,255,.20),transparent 45%,rgba(95,216,255,.10));
+  mix-blend-mode:normal;
+}
+#scene-2 img{display:block;width:100%;height:auto}
+#scene-2 .s2-iss{left:5%;top:17%;width:clamp(210px,36vw,600px);filter:drop-shadow(0 0 26px rgba(95,216,255,.20))}
+#scene-2 .s2-hubble{left:47%;top:60%;width:clamp(86px,13vw,210px);filter:brightness(.92) drop-shadow(0 0 18px rgba(139,108,255,.3))}
+#scene-2 .s2-astro{right:9%;top:21%;width:clamp(170px,27vw,430px);filter:drop-shadow(0 18px 50px rgba(4,5,13,.55)) drop-shadow(0 0 30px rgba(95,216,255,.18))}
+@media (max-width:700px){
+  #scene-2 .s2-iss{left:-4%;top:15%;width:66vw}
+  #scene-2 .s2-hubble{left:10%;top:66%;width:24vw}
+  #scene-2 .s2-astro{right:3%;top:34%;width:50vw}
+}
+
+/* ── 3 · rocket launch ────────────────────────────────────────────────────── */
+#scene-3{
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 16%,#000 78%,transparent 100%);
+          mask-image:linear-gradient(to bottom,transparent 0,#000 16%,#000 78%,transparent 100%);
+}

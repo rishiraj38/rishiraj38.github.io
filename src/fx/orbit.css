@@ -1,0 +1,140 @@
+/* ============================================================
+   fx/orbit.css — global polish layer
+   1. launch intro   2. spaceship cursor   3. mission HUD
+   4. Earth-from-orbit finale (contact)    5. small delights
+   Everything here is created by fx/orbit.js; nothing is styled
+   unless that script has added its nodes / classes.
+   ============================================================ */
+
+/* ---------- 1. launch intro ---------- */
+/* While the intro runs the page content is held back and the fixed starfield (with its
+   arrival streak) plays behind the overlay; `orbit-pre` is an optional head-level hook. */
+html.orbit-pre .wrap,
+html.orbit-intro-on .wrap{opacity:0}
+html.orbit-intro-fade .wrap{transition:opacity .75s ease .05s}
+html.orbit-intro-on .orbit-hud{opacity:0}
+
+.orbit-intro{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;overflow:hidden;cursor:pointer;
+  font-family:var(--mono);color:var(--ink);text-transform:uppercase;letter-spacing:.16em;font-size:.68rem;
+  background:radial-gradient(ellipse at 50% 50%,rgba(4,5,13,.18) 0,rgba(4,5,13,.6) 55%,rgba(4,5,13,.94) 100%);
+  transition:background-color .7s,opacity .7s}
+.orbit-intro .oi-core{display:grid;justify-items:center;gap:clamp(12px,2.2vw,22px);width:100%;padding-inline:20px}
+.orbit-intro .oi-up,.orbit-intro .oi-down{display:grid;justify-items:center;gap:clamp(8px,1.6vw,16px);
+  transition:transform .75s cubic-bezier(.7,0,.84,0),opacity .6s ease-in .1s,filter .7s}
+.orbit-intro .oi-t{color:var(--ice);font-size:clamp(.74rem,1.5vw,1rem);display:flex;gap:.9em;align-items:center}
+.orbit-intro .oi-t b{font-weight:500;color:var(--sun);font-variant-numeric:tabular-nums;min-width:4.2em;text-align:left}
+.orbit-intro .oi-t i{width:8px;height:8px;border-radius:50%;background:var(--aurora);box-shadow:0 0 12px var(--aurora);animation:oi-blink .38s steps(2,jump-none) infinite}
+.orbit-intro .oi-name{font-family:var(--display);font-weight:800;font-size:clamp(2.1rem,10.5vw,8rem);line-height:.92;letter-spacing:-.045em;white-space:nowrap;display:flex;gap:.26em}
+.orbit-intro .oi-name span{display:inline-block;background:linear-gradient(100deg,#fff,#C9BEFF 40%,var(--ice));-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:oi-letter .55s cubic-bezier(.2,.9,.2,1) backwards;animation-delay:calc(var(--i)*55ms + 60ms)}
+.orbit-intro .oi-name em{font-style:normal;display:inline-flex}
+/* the seam the screen later splits along; it doubles as the countdown progress bar */
+.orbit-intro .oi-seam{width:min(92vw,1100px);height:2px;border-radius:2px;transform-origin:50% 50%;
+  background:linear-gradient(90deg,transparent,var(--nebula) 18%,var(--ice) 40%,#fff 50%,var(--ice) 60%,var(--nebula) 82%,transparent);
+  box-shadow:0 0 22px rgba(95,216,255,.8);animation:oi-seam 1.15s cubic-bezier(.3,0,.2,1) backwards;
+  transition:transform .7s cubic-bezier(.6,0,.9,.3),opacity .7s ease-in}
+.orbit-intro .oi-checks{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 26px;color:var(--muted)}
+.orbit-intro .oi-checks span{animation:oi-fade .3s ease backwards;animation-delay:calc(var(--i)*260ms + 180ms)}
+.orbit-intro .oi-checks b{font-weight:500;color:var(--aurora)}
+.orbit-intro .oi-ring{position:absolute;left:50%;top:50%;width:min(96vmin,900px);aspect-ratio:1;margin:calc(min(96vmin,900px)/-2) 0 0 calc(min(96vmin,900px)/-2);
+  border-radius:50%;border:1px dashed rgba(190,185,255,.22);animation:oi-spin 14s linear infinite;transition:transform .8s cubic-bezier(.6,0,.9,.3),opacity .6s}
+.orbit-intro .oi-ring::before{content:"";position:absolute;inset:9%;border-radius:50%;border:1px solid rgba(95,216,255,.14);border-top-color:rgba(95,216,255,.7)}
+.orbit-intro .oi-c{position:absolute;color:var(--muted);transition:transform .7s cubic-bezier(.6,0,.9,.3),opacity .5s;animation:oi-fade .4s ease backwards}
+.orbit-intro .oi-c::before{content:"";position:absolute;width:18px;height:18px;border:1px solid var(--ice);opacity:.7}
+.orbit-intro .oi-tl{left:clamp(16px,4vw,56px);top:clamp(16px,4vw,44px);padding:10px 0 0 12px}
+.orbit-intro .oi-tr{right:clamp(16px,4vw,56px);top:clamp(16px,4vw,44px);padding:10px 12px 0 0;text-align:right}
+.orbit-intro .oi-bl{left:clamp(16px,4vw,56px);bottom:clamp(16px,4vw,44px);padding:0 0 10px 12px}
+.orbit-intro .oi-br{right:clamp(16px,4vw,56px);bottom:clamp(16px,4vw,44px);padding:0 12px 10px 0;text-align:right}
+.orbit-intro .oi-tl::before{left:0;top:0;border-right:0;border-bottom:0}
+.orbit-intro .oi-tr::before{right:0;top:0;border-left:0;border-bottom:0}
+.orbit-intro .oi-bl::before{left:0;bottom:0;border-right:0;border-top:0}
+.orbit-intro .oi-br::before{right:0;bottom:0;border-left:0;border-top:0}
+/* lift-off: the top half flies up and through the camera, the bottom half drops away, the seam flares open */
+.orbit-intro.out{background-color:transparent;opacity:0;pointer-events:none}
+.orbit-intro.out .oi-up{transform:translateY(-16vh) scale(3.4);opacity:0;filter:blur(6px)}
+.orbit-intro.out .oi-down{transform:translateY(22vh) scale(1.5);opacity:0}
+.orbit-intro.out .oi-seam{transform:scale(1.4,160);opacity:0}
+.orbit-intro.out .oi-ring{transform:scale(3.2);opacity:0}
+.orbit-intro.out .oi-tl{transform:translate(-60px,-60px);opacity:0}
+.orbit-intro.out .oi-tr{transform:translate(60px,-60px);opacity:0}
+.orbit-intro.out .oi-bl{transform:translate(-60px,60px);opacity:0}
+.orbit-intro.out .oi-br{transform:translate(60px,60px);opacity:0}
+.orbit-intro.fast,.orbit-intro.fast *{transition-duration:.32s!important;transition-delay:0s!important}
+@keyframes oi-letter{from{transform:translateY(.5em) scale(1.25);opacity:0;filter:blur(10px)}}
+@keyframes oi-seam{from{transform:scaleX(0)}}
+@keyframes oi-fade{from{opacity:0}}
+@keyframes oi-blink{50%{opacity:.25}}
+@keyframes oi-spin{to{transform:rotate(360deg)}}
+@media (max-width:560px){.orbit-intro .oi-tr,.orbit-intro .oi-bl{display:none}}
+
+/* ---------- 2. spaceship cursor (class is only set for fine pointers, after the first mouse move) ---------- */
+.orbit-fx{position:fixed;inset:0;width:100%;height:100%;z-index:9998;pointer-events:none}
+@media (hover:hover) and (pointer:fine){
+  html.orbit-cursor,html.orbit-cursor *{cursor:none!important}
+  html.orbit-cursor input,html.orbit-cursor textarea,html.orbit-cursor [contenteditable],html.orbit-cursor .addr{cursor:text!important}
+  html.orbit-cursor select{cursor:default!important}
+}
+.orbit-ship,.orbit-ret{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;will-change:transform;opacity:0;transition:opacity .25s}
+html.orbit-cursor .orbit-ship,html.orbit-cursor .orbit-ret{opacity:1}
+html.orbit-cursor.orbit-cursor-text .orbit-ship,html.orbit-cursor.orbit-cursor-text .orbit-ret,
+html.orbit-cursor.orbit-cursor-away .orbit-ship,html.orbit-cursor.orbit-cursor-away .orbit-ret{opacity:0}
+.orbit-ship svg{display:block;width:26px;height:26px;margin:-13px 0 0 -13px;overflow:visible;filter:drop-shadow(0 0 6px rgba(95,216,255,.9));transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.orbit-ship .flame{transform-origin:13px 19px;animation:os-flame .14s ease-in-out infinite alternate}
+.orbit-ret i{display:block;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1px solid rgba(95,216,255,.5);position:relative;
+  transition:width .25s cubic-bezier(.2,.8,.2,1),height .25s cubic-bezier(.2,.8,.2,1),margin .25s cubic-bezier(.2,.8,.2,1),border-color .25s,background-color .25s,transform .15s}
+.orbit-ret i::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--ink);box-shadow:0 0 8px var(--ice)}
+/* over links and buttons: the reticle locks on and the ship tucks in */
+html.orbit-cursor-link .orbit-ret i{width:58px;height:58px;margin:-29px 0 0 -29px;border:1.5px dashed var(--sun);background:rgba(255,179,71,.09);animation:oi-spin 5s linear infinite}
+html.orbit-cursor-link .orbit-ret i::after{background:var(--sun);box-shadow:0 0 10px var(--sun)}
+html.orbit-cursor-link .orbit-ship svg{transform:scale(.72);filter:drop-shadow(0 0 8px rgba(255,179,71,.95))}
+html.orbit-cursor-down .orbit-ret i{transform:scale(.72)}
+@keyframes os-flame{from{transform:scaleY(.7);opacity:.75}to{transform:scaleY(1.35);opacity:1}}
+
+/* ---------- 3. mission HUD (desktop, fine pointer only) ---------- */
+.orbit-hud{position:fixed;right:max(4px,calc((var(--gutter) - 26px)/2));top:50%;transform:translateY(-50%);z-index:15;width:26px;
+  display:none;flex-direction:column;align-items:center;gap:16px;font-family:var(--mono);transition:opacity .8s}
+@media (min-width:900px) and (hover:hover) and (pointer:fine){.orbit-hud{display:flex}}
+.orbit-hud .oh-track{position:relative;width:2px;height:min(44vh,360px);border-radius:2px;background:var(--rule)}
+.orbit-hud .oh-fill{position:absolute;inset:0;border-radius:2px;transform-origin:50% 0;transform:scaleY(0);background:linear-gradient(var(--sun),var(--nebula) 45%,var(--ice))}
+.orbit-hud .oh-wp{position:absolute;left:50%;width:22px;height:22px;margin:-11px 0 0 -11px;display:grid;place-items:center;text-decoration:none;border-radius:50%}
+.orbit-hud .oh-wp::before{content:"";width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff,var(--c) 58%);
+  box-shadow:0 0 0 3px var(--space);opacity:.62;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,opacity .35s}
+.orbit-hud .oh-wp:hover::before,.orbit-hud .oh-wp.past::before{opacity:1}
+.orbit-hud .oh-wp.on::before{opacity:1;transform:scale(1.75);box-shadow:0 0 0 2px var(--space),0 0 0 3px var(--c),0 0 16px 2px var(--c)}
+.orbit-hud .oh-wp.earth::before{background:radial-gradient(circle at 34% 30%,#DFF6FF,#3C8BE8 45%,#1D4FA8 70%,#2FA36B 71%)}
+.orbit-hud .oh-wp span{position:absolute;right:28px;top:50%;transform:translate(8px,-50%);white-space:nowrap;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;color:var(--ink);background:rgba(10,11,28,.92);border:1px solid var(--rule);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.orbit-hud .oh-wp:hover span,.orbit-hud .oh-wp:focus-visible span{opacity:1;transform:translate(0,-50%)}
+@media (min-width:1500px){.orbit-hud .oh-wp.on span{opacity:.9;transform:translate(0,-50%);border-color:transparent;background:rgba(10,11,28,.6);color:var(--muted)}}
+.orbit-hud .oh-ship{position:absolute;left:-15px;top:-6px;width:10px;height:12px;will-change:transform;pointer-events:none;
+  background:var(--ink);clip-path:polygon(50% 100%,0 0,50% 22%,100% 0);filter:drop-shadow(0 0 5px var(--ice))}
+.orbit-hud .oh-read{writing-mode:vertical-rl;white-space:nowrap;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0;line-height:1}
+.orbit-hud .oh-read b{font-weight:500;color:var(--ice);font-variant-numeric:tabular-nums}
+@media (max-height:660px){.orbit-hud .oh-read{display:none}}
+
+/* ---------- 4. Earth finale ---------- */
+.contact{padding-bottom:clamp(270px,38vw,540px)}
+.contact .horizon{display:none}
+/* body-level stage: full viewport width, from the top of .contact to the end of the page (top/height set by JS) */
+.orbit-earth{position:absolute;left:0;top:0;width:100%;height:0;z-index:0;pointer-events:none;overflow:hidden}
+.orbit-earth::after{content:"";position:absolute;left:0;right:0;bottom:0;height:150px;background:linear-gradient(transparent,rgba(4,5,13,.82))}
+.orbit-earth canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.4s ease}   /* top/height set by JS */
+.orbit-earth.ready canvas{opacity:1}
+/* no-WebGL fallback: a CSS globe wearing the same Blue Marble texture */
+.orbit-earth .oe-disc{position:absolute;left:50%;top:var(--top,60%);width:calc(var(--r,600px)*2);height:calc(var(--r,600px)*2);margin-left:calc(var(--r,600px)*-1);border-radius:50%;
+  background:#0A1B3A url(assets/orbit/earth-day.jpg) 0 38%/auto 170% repeat-x;animation:oe-spin 260s linear infinite;
+  box-shadow:0 0 0 1px rgba(150,210,255,.55),0 0 46px 8px rgba(70,150,255,.6),0 0 160px 30px rgba(60,120,255,.28)}
+.orbit-earth .oe-disc::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 68% 4%,rgba(255,225,170,.5) 0,transparent 9%),radial-gradient(circle at 62% 8%,transparent 0,rgba(3,5,16,.25) 26%,rgba(3,5,16,.9) 58%);
+  box-shadow:inset 0 14px 40px rgba(120,190,255,.7)}
+@keyframes oe-spin{to{background-position-x:calc(var(--r,600px)*-6.8)}}
+
+/* ---------- 5. small delights ---------- */
+.orbit-scr{color:var(--ice);-webkit-text-fill-color:var(--ice)}
+.orbit-rest{opacity:.22}
+.orbit-mag{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+#name.orbit-tilt{will-change:transform;transform-style:preserve-3d}
+
+@media (prefers-reduced-motion:reduce){
+  .orbit-intro,.orbit-ship,.orbit-ret,.orbit-fx{display:none!important}
+}

@@ -1,0 +1,861 @@
+<title>Rishi Raj</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<script>try{if(!sessionStorage.getItem('orbit-intro')&&!matchMedia('(prefers-reduced-motion:reduce)').matches&&!location.hash){document.documentElement.classList.add('orbit-pre');setTimeout(function(){document.documentElement.classList.remove('orbit-pre')},3000)}}catch(e){}</script>
+<style>html.orbit-pre .wrap{opacity:0}</style>
+<style>
+/* Layout: one deep-space world. A live solar system is the hero (Rishi is the sun, every organization is a planet, every merged PR is a moon); a fixed starfield runs behind the whole page and every section moves. Single dark theme by choice. */
+:root{
+  color-scheme:dark;
+  --space:#000000; --deep:#05050A; --panel:rgba(12,12,18,.66); --ink:#EEECFF; --muted:#9C99C6; --rule:rgba(190,185,255,.16);
+  --sun:#FFB347; --nebula:#8B6CFF; --ice:#5FD8FF; --rose:#FF7AB6; --aurora:#5BE3A1;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --gutter:clamp(16px,4vw,56px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--space);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:.22em;text-decoration-thickness:1px;transition:color .2s}
+a:hover{color:var(--ice);text-decoration-color:var(--ice)}
+:focus-visible{outline:2px solid var(--ice);outline-offset:3px;border-radius:4px}
+::selection{background:var(--nebula);color:var(--ink)}
+h1,h2,h3,p,ul,ol,dl,dd,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+button{font:inherit}
+
+/* fixed universe */
+.sky{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.sky canvas{position:absolute;inset:0;width:100%;height:100%}
+.neb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.34}
+.neb.a{width:62vmax;height:62vmax;left:-22vmax;top:-18vmax;background:radial-gradient(circle,var(--nebula),transparent 62%);animation:drift 38s ease-in-out infinite alternate}
+.neb.b{width:54vmax;height:54vmax;right:-20vmax;top:30vh;background:radial-gradient(circle,#2A6BFF,transparent 62%);animation:drift 46s ease-in-out infinite alternate-reverse}
+.neb.c{width:46vmax;height:46vmax;left:20vw;bottom:-26vmax;background:radial-gradient(circle,var(--rose),transparent 62%);opacity:.2;animation:drift 52s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(8vmax,5vmax,0) scale(1.18)}}
+.glow{position:fixed;left:0;top:0;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(circle,rgba(139,108,255,.22),rgba(95,216,255,.08) 40%,transparent 68%);mix-blend-mode:screen;opacity:0;transition:opacity .6s;will-change:transform}
+.progress{position:fixed;left:0;top:0;height:3px;width:100%;z-index:20;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--nebula),var(--ice),var(--sun))}
+
+.scene{position:relative;margin-inline:calc(var(--gutter)*-1)}
+.wrap{position:relative;z-index:1;max-width:1280px;margin-inline:auto;padding-inline:var(--gutter)}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ice);display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--ice);box-shadow:0 0 0 0 var(--ice);animation:ping 2.4s ease-out infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(95,216,255,.7)}100%{box-shadow:0 0 0 14px rgba(95,216,255,0)}}
+
+/* top bar */
+.top{display:flex;flex-wrap:wrap;gap:8px 28px;justify-content:space-between;align-items:center;padding-block:22px}
+.top .id{font-family:var(--mono);font-size:.78rem;display:flex;align-items:center;gap:10px}
+.top .id i{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFE9B8,var(--sun) 55%,#C0621B);box-shadow:0 0 18px var(--sun);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.25);box-shadow:0 0 30px var(--sun)}}
+.top nav{display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--mono);font-size:.78rem}
+.top nav a{text-decoration:none;color:var(--muted);position:relative;padding-block:4px}
+.top nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ice);transform:scaleX(0);transform-origin:0 50%;transition:transform .3s}
+.top nav a:hover{color:var(--ink)}
+.top nav a:hover::after{transform:scaleX(1)}
+
+/* hero */
+.hero{padding-block:clamp(28px,5vw,64px) 0}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(3rem,12.6vw,11.5rem);line-height:.9;letter-spacing:-.05em;text-transform:uppercase;display:flex;flex-wrap:wrap;gap:0 .28em}
+.hero h1 .w{display:inline-flex;white-space:nowrap}
+.hero h1 .l{display:inline-block;background:linear-gradient(100deg,#fff 0%,#C9BEFF 30%,var(--ice) 50%,#C9BEFF 70%,#fff 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rise .9s cubic-bezier(.2,.9,.2,1) backwards,sheen 7s linear infinite;animation-delay:calc(var(--i)*70ms),0s}
+@keyframes rise{from{transform:translateY(.7em) rotate(8deg);opacity:0;filter:blur(12px)}}
+@keyframes sheen{to{background-position:-300% 0}}
+.hero-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:28px clamp(32px,6vw,96px);margin-top:clamp(24px,3.5vw,44px);align-items:start}
+.lede{font-size:clamp(1.2rem,2vw,1.6rem);line-height:1.4;max-width:34ch;text-wrap:balance;animation:fadeup 1s .5s backwards}
+.lede em{font-style:normal;color:var(--sun)}
+@keyframes fadeup{from{opacity:0;transform:translateY(24px)}}
+.facts{display:grid;border-top:1px solid var(--rule);animation:fadeup 1s .7s backwards}
+.facts div{display:grid;grid-template-columns:minmax(0,10ch) minmax(0,1fr);gap:16px;align-items:baseline;padding-block:12px;border-bottom:1px solid var(--rule)}
+.facts dt{font-family:var(--display);font-weight:600;font-size:1.7rem;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--sun)}
+.facts dd{font-family:var(--mono);font-size:.74rem;color:var(--muted);line-height:1.45}
+
+/* solar system */
+.system{position:relative;margin-top:clamp(-70px,-4vw,0px);margin-inline:calc(var(--gutter)*-1)}
+.system-cap{padding-inline:var(--gutter)}
+.system canvas{display:block;width:100%;touch-action:pan-y}
+.system-cap{display:flex;flex-wrap:wrap;gap:6px 24px;justify-content:space-between;font-family:var(--mono);font-size:.72rem;color:var(--muted);padding-top:6px}
+.scroll-cue{display:inline-flex;align-items:center;gap:10px}
+.scroll-cue i{width:1px;height:26px;background:linear-gradient(var(--ice),transparent);animation:cue 1.8s ease-in-out infinite;transform-origin:50% 0}
+@keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* sections + reveal */
+section{padding-block:clamp(64px,10vw,140px) 0}
+.sh{display:grid;gap:16px;margin-bottom:clamp(28px,4vw,52px)}
+.sh h2{font-family:var(--display);font-weight:800;font-size:clamp(1.9rem,5.2vw,4.2rem);line-height:1;letter-spacing:-.04em;text-transform:uppercase;text-wrap:balance;max-width:18ch}
+.anim [data-r]{opacity:0;transform:translateY(44px) scale(.97);filter:blur(8px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1),filter .9s;transition-delay:calc(var(--d,0)*90ms)}
+.anim [data-r].in{opacity:1;transform:none;filter:none}
+
+/* mission log */
+.xp{position:relative;display:grid;gap:22px;padding-left:34px}
+.xp::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--sun),var(--nebula),var(--ice));background-size:100% 200%;animation:flow 6s linear infinite}
+@keyframes flow{to{background-position:0 200%}}
+.xp article{position:relative;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:10px clamp(24px,5vw,64px);padding:26px clamp(18px,3vw,32px);background:var(--panel);border:1px solid var(--rule);border-radius:18px;backdrop-filter:blur(10px);transition:border-color .3s,transform .4s}
+.xp article:hover{border-color:var(--ice);transform:translateX(8px)}
+.xp article::before{content:"";position:absolute;left:-34px;top:30px;width:16px;height:16px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 0 rgba(255,179,71,.7);animation:pingsun 2.2s ease-out infinite}
+@keyframes pingsun{100%{box-shadow:0 0 0 16px rgba(255,179,71,0)}}
+.xp .when{font-family:var(--mono);font-size:.76rem;color:var(--muted);padding-top:.4em}
+.xp h3{font-family:var(--display);font-weight:600;font-size:clamp(1.1rem,2vw,1.5rem);line-height:1.2;letter-spacing:-.02em}
+.xp .org{font-family:var(--mono);font-size:.76rem;color:var(--sun);margin-top:8px}
+.xp ul{margin-top:14px;display:grid;gap:9px;max-width:64ch;color:#D6D3F5}
+.xp li{padding-left:1.4em;position:relative}
+.xp li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--ice);animation:twinkle 2.6s ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.25;transform:scale(.6)}}
+
+/* case study */
+.case{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:36px clamp(32px,6vw,96px);align-items:start}
+.bignum{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,6vw,5.2rem);line-height:.9;letter-spacing:-.05em;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:baseline;gap:.14em}
+.bignum s{color:var(--muted);text-decoration-color:var(--rose);text-decoration-thickness:.07em}
+.bignum .arrow{font-size:.5em;color:var(--ice);animation:nudge 1.4s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(.25em)}}
+.bignum .zero{color:var(--aurora);text-shadow:0 0 40px rgba(91,227,161,.6);animation:glow 3s ease-in-out infinite}
+@keyframes glow{50%{text-shadow:0 0 70px rgba(91,227,161,.95)}}
+.case .say{display:grid;gap:16px;margin-top:26px;max-width:46ch}
+.case .say p:first-child{font-size:1.2rem;line-height:1.4}
+.case .say p+p{color:var(--muted)}
+.case code{font-family:var(--mono);font-size:.82em;color:var(--ice)}
+.graph{position:relative;display:grid}
+.graph::before{content:"";position:absolute;left:5px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--nebula),var(--ice));transform-origin:50% 0;transform:scaleY(var(--grow,1));transition:transform 1.8s cubic-bezier(.2,.8,.2,1)}
+.graph li{position:relative;padding:0 0 22px 34px}
+.graph li:last-child{padding-bottom:0}
+.graph li::before{content:"";position:absolute;left:0;top:6px;width:12px;height:12px;border-radius:50%;background:var(--ice);box-shadow:0 0 12px var(--ice);animation:twinkle 2.4s ease-in-out infinite;animation-delay:calc(var(--d,0)*200ms)}
+.graph a{display:grid;gap:3px;text-decoration:none;transition:transform .3s}
+.graph a:hover{transform:translateX(8px)}
+.graph .ref{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.graph .ttl{line-height:1.35}
+
+.else{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:clamp(48px,7vw,88px)}
+.else a{display:grid;gap:6px;padding:20px 22px;background:var(--panel);border:1px solid var(--rule);border-radius:16px;text-decoration:none;backdrop-filter:blur(10px);transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s}
+.else a:hover{transform:translateY(-6px);border-color:var(--nebula);box-shadow:0 18px 50px -18px var(--nebula);color:inherit}
+.else .repo{font-family:var(--display);font-weight:600;font-size:1rem;letter-spacing:-.02em;line-height:1.25;overflow-wrap:anywhere}
+.else .what{color:var(--muted);font-size:.98rem;line-height:1.4}
+.else .when{font-family:var(--mono);font-size:.7rem;color:var(--ice)}
+
+/* ledger */
+.controls{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-start;justify-content:space-between;padding-bottom:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;flex:1 1 480px}
+.chips button,.more{font-family:var(--mono);font-size:.72rem;color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:999px;padding:7px 13px;cursor:pointer;transition:transform .2s,border-color .2s,background .2s}
+.chips button:hover,.more:hover{border-color:var(--ice);transform:translateY(-2px)}
+.chips button[aria-pressed="true"]{background:linear-gradient(120deg,var(--nebula),#4C7DFF);border-color:transparent}
+.chips button span{opacity:.65;margin-left:5px}
+#q{font-family:var(--mono);font-size:.78rem;color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:999px;padding:9px 16px;width:min(100%,260px)}
+#q::placeholder{color:var(--muted)}
+.ledger{border-top:1px solid var(--rule)}
+.ledger a{display:grid;grid-template-columns:10ch minmax(0,24ch) minmax(0,1fr) auto;gap:4px 20px;align-items:baseline;padding:12px 10px;border-bottom:1px solid var(--rule);text-decoration:none;transition:background .25s,padding-left .25s;animation:rowin .5s backwards;animation-delay:calc(var(--d,0)*28ms)}
+@keyframes rowin{from{opacity:0;transform:translateX(-18px)}}
+.ledger a:hover{background:rgba(139,108,255,.14);padding-left:20px;color:inherit}
+.ledger .d,.ledger .r,.ledger .n{font-family:var(--mono);font-size:.74rem;font-variant-numeric:tabular-nums}
+.ledger .d{color:var(--muted)}
+.ledger .r{overflow-wrap:anywhere;color:var(--ice)}
+.ledger .t{font-size:.98rem;line-height:1.35;min-width:0;overflow-wrap:anywhere}
+.ledger .n{color:#B9A6FF;white-space:nowrap}
+.ledger .n.open{color:var(--aurora)}
+.ledger .empty{padding-block:24px;color:var(--muted);font-family:var(--mono);font-size:.8rem}
+.ledger-foot{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding-top:18px}
+.ledger-foot p{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+
+/* projects: one planet each */
+.projects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.projects article{position:relative;display:grid;gap:12px;align-content:start;padding:28px clamp(20px,3vw,34px) 30px;background:var(--panel);border:1px solid var(--rule);border-radius:24px;backdrop-filter:blur(10px);overflow:hidden;transition:transform .5s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .4s;transform-style:preserve-3d}
+.projects article:hover{border-color:var(--c);box-shadow:0 30px 80px -30px var(--c)}
+.orb{position:absolute;right:-34px;top:-34px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#fff8,transparent 34%),repeating-linear-gradient(8deg,transparent 0 12px,rgba(0,0,0,.2) 12px 20px),var(--c);background-size:100% 100%,200% 100%,100% 100%;box-shadow:inset -22px -18px 40px rgba(0,0,0,.6),0 0 60px -8px var(--c);animation:spin 14s linear infinite,bob 7s ease-in-out infinite;animation-delay:0s,calc(var(--k)*-1.3s)}
+@keyframes spin{to{background-position:0 0,-200% 0,0 0}}
+@keyframes bob{50%{transform:translateY(12px)}}
+.orb.ring::after{content:"";position:absolute;left:-28%;right:-28%;top:38%;height:24%;border:3px solid rgba(255,255,255,.5);border-radius:50%;transform:rotate(-18deg);box-shadow:0 0 16px var(--c)}
+.projects article>*:not(.orb){position:relative}
+.projects .kind{font-family:var(--mono);font-size:.72rem;color:var(--c);max-width:calc(100% - 110px)}
+.projects h3{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,3.2vw,2.5rem);line-height:1;letter-spacing:-.04em;text-transform:uppercase;max-width:calc(100% - 100px);overflow-wrap:anywhere}
+.projects p.desc{max-width:48ch;color:#D6D3F5}
+.projects .stack{font-family:var(--mono);font-size:.72rem;color:var(--muted);line-height:1.6}
+.projects .links{display:flex;flex-wrap:wrap;gap:6px 20px;font-family:var(--mono);font-size:.76rem}
+
+/* recognition + writing */
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px clamp(32px,6vw,96px)}
+.duo h2{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3.2vw,2.5rem);line-height:1;letter-spacing:-.035em;text-transform:uppercase;margin-bottom:24px}
+.list{border-top:1px solid var(--rule)}
+.list li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:4px 12px;padding-block:16px;border-bottom:1px solid var(--rule);transition:padding-left .3s}
+.list li:hover{padding-left:10px}
+.list li::before{content:"✦";grid-row:1 / span 2;color:var(--sun);animation:twinkle 2.8s ease-in-out infinite;animation-delay:calc(var(--d,0)*300ms)}
+.list .ttl{font-weight:600;font-size:1.1rem;line-height:1.3}
+.list .ttl a{text-decoration:none}
+.list .meta{grid-column:2;font-family:var(--mono);font-size:.72rem;color:var(--muted);line-height:1.5}
+.list .pill{color:var(--aurora)}
+
+/* toolkit belts */
+.belts{display:grid;gap:14px;margin-inline:calc(var(--gutter)*-1);overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.belt{display:flex;gap:14px;width:max-content;animation:belt var(--t,40s) linear infinite}
+.belt.rev{animation-direction:reverse}
+.belts:hover .belt{animation-play-state:paused}
+@keyframes belt{to{transform:translateX(-50%)}}
+.belt span{font-family:var(--display);font-weight:600;font-size:clamp(.95rem,1.8vw,1.35rem);white-space:nowrap;padding:12px 22px;border:1px solid var(--rule);border-radius:999px;background:var(--panel)}
+.belt span:nth-child(3n){color:var(--ice)}
+.belt span:nth-child(3n+1){color:var(--sun)}
+
+/* contact */
+.contact{position:relative;padding-block:clamp(72px,11vw,150px) clamp(150px,22vw,300px);overflow:hidden;margin-inline:calc(var(--gutter)*-1);padding-inline:var(--gutter)}
+.contact h2{font-family:var(--display);font-weight:800;font-size:clamp(2rem,7.4vw,6.4rem);line-height:.98;letter-spacing:-.05em;text-transform:uppercase;text-wrap:balance;max-width:14ch}
+.mail{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin-top:clamp(28px,4vw,48px)}
+.mail .addr{font-family:var(--mono);font-size:clamp(.95rem,2.4vw,1.4rem);user-select:all;overflow-wrap:anywhere}
+.mail button{font-family:var(--mono);font-size:.78rem;color:#0B0920;background:linear-gradient(120deg,var(--sun),#FFD98A);border:0;border-radius:999px;padding:11px 20px;cursor:pointer;box-shadow:0 0 0 0 rgba(255,179,71,.6);animation:pingsun 2.4s ease-out infinite;transition:transform .2s}
+.mail button:hover{transform:scale(1.06)}
+.socials{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:22px;font-family:var(--mono);font-size:.82rem}
+.horizon{position:absolute;left:50%;bottom:0;width:max(140vw,1100px);aspect-ratio:1;max-width:none;border-radius:50%;transform:translate(-50%,86%);background:radial-gradient(circle at 50% 0%,#4B36C9 0%,#1B1552 30%,#070617 62%);box-shadow:0 -6px 60px 6px rgba(139,108,255,.55),0 -2px 0 0 rgba(190,180,255,.7);pointer-events:none}
+.horizon::before{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.07) 0 2deg,transparent 2deg 9deg);animation:rotate 160s linear infinite}
+@keyframes rotate{to{transform:rotate(360deg)}}
+.contact>*:not(.horizon){position:relative;z-index:1}
+footer{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:6px 24px;justify-content:space-between;padding-block:20px 36px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:32px clamp(32px,6vw,96px);align-items:start}
+.about .big{font-size:clamp(1.25rem,2.2vw,1.75rem);line-height:1.4;max-width:34ch;text-wrap:pretty}
+.about .big+p{margin-top:18px;color:var(--muted);max-width:52ch}
+.quick{display:grid;border-top:1px solid var(--rule)}
+.quick div{display:grid;grid-template-columns:minmax(0,11ch) minmax(0,1fr);gap:14px;padding-block:12px;border-bottom:1px solid var(--rule)}
+.quick dt{font-family:var(--mono);font-size:.72rem;color:var(--ice);padding-top:.25em}
+.quick dd{line-height:1.4}
+/* first contact log */
+.firsts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(24px,5vw,72px);border-top:1px solid var(--rule)}
+.firsts a{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;align-items:baseline;padding:14px 6px;border-bottom:1px solid var(--rule);text-decoration:none;transition:background .25s,padding-left .25s}
+.firsts a:hover{background:rgba(139,108,255,.14);padding-left:14px;color:inherit}
+.firsts .when{font-family:var(--mono);font-size:.72rem;color:var(--sun);white-space:nowrap}
+.firsts .org{font-family:var(--display);font-weight:600;font-size:1rem;letter-spacing:-.02em;overflow-wrap:anywhere}
+.firsts .what{grid-column:2;color:var(--muted);font-size:.95rem;line-height:1.35;overflow-wrap:anywhere}
+/* project details */
+.projects .feat{display:grid;gap:7px;font-size:.95rem;color:#C9C6EA;line-height:1.4}
+.projects .feat li{padding-left:1.3em;position:relative}
+.projects .feat li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.morebuilds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(24px,5vw,72px);margin-top:28px;border-top:1px solid var(--rule)}
+.morebuilds a{display:grid;gap:3px;padding:14px 6px;border-bottom:1px solid var(--rule);text-decoration:none;transition:padding-left .25s}
+.morebuilds a:hover{padding-left:14px}
+.morebuilds b{font-family:var(--display);font-weight:600;font-size:1rem;letter-spacing:-.02em}
+.morebuilds span{color:var(--muted);font-size:.95rem;line-height:1.35}
+.morebuilds i{font-style:normal;font-family:var(--mono);font-size:.7rem;color:var(--ice)}
+
+@media (max-width:820px){
+  body{font-size:17px}
+  .hero-grid,.case,.duo,.projects,.else,.about,.firsts,.morebuilds{grid-template-columns:minmax(0,1fr)}
+  .hero h1{font-size:clamp(4rem,25vw,8rem);line-height:.86;flex-direction:column}
+  .top nav{flex-wrap:nowrap;overflow-x:auto;width:100%;padding-bottom:6px;scrollbar-width:none}
+  .top nav::-webkit-scrollbar{display:none}
+  .top nav a{white-space:nowrap}
+  .chips{flex-wrap:nowrap;overflow-x:auto;flex:1 1 100%;min-width:0;padding-bottom:8px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chips button{white-space:nowrap;flex:none}
+  #q{width:100%}
+  .mail button{padding:13px 22px}
+  .chips button,.more{padding:10px 15px}
+  .xp article{grid-template-columns:minmax(0,1fr)}
+  .xp .when{padding-top:0}
+  .ledger a{grid-template-columns:minmax(0,1fr) auto}
+  .ledger .d{display:none}
+  .ledger .r{grid-column:1}
+  .ledger .n{grid-column:2;grid-row:1}
+  .ledger .t{grid-column:1 / -1}
+  .orb{width:110px;height:110px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+
+<div class="sky" aria-hidden="true">
+  <div class="neb a"></div><div class="neb b"></div><div class="neb c"></div>
+  <canvas id="stars"></canvas>
+</div>
+<div class="glow" id="glow" aria-hidden="true"></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<div class="wrap">
+
+<header class="top">
+  <span class="id"><i></i>rishiraj38 / portfolio</span>
+  <nav aria-label="Sections">
+    <a href="#about">about</a>
+    <a href="#experience">experience</a>
+    <a href="#permissions">case study</a>
+    <a href="#ledger">pull requests</a>
+    <a href="#projects">projects</a>
+    <a href="#writing">writing</a>
+    <a href="#contact">contact</a>
+  </nav>
+</header>
+
+<main>
+<div class="hero">
+  <h1 id="name" aria-label="Rishi Raj">Rishi Raj</h1>
+  <div class="hero-grid">
+    <p class="lede">Open-source engineer. I maintain projects across the Layer5 and Meshery ecosystem, and I was a <em>CNCF LFX mentee</em> in 2026.</p>
+    <dl class="facts">
+      <div><dt id="s-merged">0</dt><dd>pull requests merged upstream, across <span id="s-repos">0</span> repositories in <span id="s-orgs">0</span> organizations</dd></div>
+      <div><dt id="s-reviewed">0</dt><dd>pull requests reviewed for other contributors</dd></div>
+      <div><dt id="s-contrib">0</dt><dd>GitHub contributions in the last twelve months</dd></div>
+    </dl>
+  </div>
+
+  <figure class="system">
+    <div id="system3d" hidden></div>
+    <canvas id="system" role="img" aria-label="Animated solar system. Each planet is an organization I have contributed to and each moon is one merged pull request."></canvas>
+    <figcaption class="system-cap">
+      <span>Every planet is an organization. Every moon is a merged pull request. Select a planet to list its PRs.</span>
+      <span class="scroll-cue"><i></i>scroll</span>
+    </figcaption>
+  </figure>
+</div>
+
+<section id="about">
+  <header class="sh" data-r>
+    <p class="eyebrow">About</p>
+    <h2>Student by day, maintainer by commit.</h2>
+  </header>
+  <div class="about">
+    <div data-r>
+      <p class="big">I'm a B.Tech student in Computer Science and AI at Newton School of Technology, class of 2028. My first pull request to Meshery merged in July 2025. Since then I have become a maintainer across Layer5 projects and spent a summer as a CNCF LFX mentee.</p>
+      <p>I work mostly in TypeScript, React and Go. I like the unglamorous parts of open source: refactors that touch three repositories at once, reviews, CI, and docs that save the next contributor an hour. Outside upstream work I build AI products end to end.</p>
+    </div>
+    <dl class="quick" data-r style="--d:1">
+      <div><dt>Studying</dt><dd>B.Tech, CS &amp; AI · Newton School of Technology, Rishihood University</dd></div>
+      <div><dt>School</dt><dd>Sainik School Tilaiya, 2017 – 2024</dd></div>
+      <div><dt>Maintains</dt><dd>Projects across the Layer5 and Meshery ecosystem</dd></div>
+      <div><dt>Focus</dt><dd>Design systems, authorization, cloud native tooling, AI agents</dd></div>
+      <div><dt>Now in</dt><dd id="now-in">Open pull requests upstream</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="experience">
+  <header class="sh" data-r>
+    <p class="eyebrow">Mission log</p>
+    <h2>Mentee, then maintainer.</h2>
+  </header>
+  <div class="xp">
+    <article data-r>
+      <p class="when">Jun 2026 – Aug 2026</p>
+      <div>
+        <h3>LFX Mentorship Mentee</h3>
+        <p class="org">CNCF · Meshery · Models Support for OCI Registries · 2026 Term 2</p>
+        <ul>
+          <li>Built OCI registry support for Meshery's model registry, with ORAS-based push and pull so model artifacts ship in one standard format across platforms.</li>
+          <li>Designed and implemented a unified, RBAC-based permission-key system across Meshery Cloud and Kanvas, and moved the permission checks into a shared component layer.</li>
+          <li>Reviewed 300+ pull requests and merged 100+ across meshery, meshery/schemas and sistent to keep their interfaces consistent.</li>
+          <li>Wrote the contributor guide for permission keys and the design-system docs for PermissionShield.</li>
+        </ul>
+      </div>
+    </article>
+    <article data-r>
+      <p class="when">Feb 2026 – Jun 2026</p>
+      <div>
+        <h3>Open Source Contributor</h3>
+        <p class="org">Meshery (CNCF) · Layer5</p>
+        <ul>
+          <li>Refactored UI and shared design-system components across Meshery for maintainability.</li>
+          <li>Found and fixed a recurring crash on the Registry page. The fix spanned several interdependent repositories.</li>
+          <li>Onboarded new contributors, triaged issues and improved contributor docs.</li>
+        </ul>
+      </div>
+    </article>
+    <article data-r>
+      <p class="when">Aug 2024 – Jun 2028</p>
+      <div>
+        <h3>B.Tech, Computer Science &amp; Artificial Intelligence</h3>
+        <p class="org">Newton School of Technology · Rishihood University</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<div class="scene" id="scene-1" aria-hidden="true"></div>
+
+<section id="permissions">
+  <header class="sh" data-r>
+    <p class="eyebrow">Case study · Meshery authorization</p>
+    <h2>A permission system that updates itself.</h2>
+  </header>
+  <div class="case">
+    <div data-r>
+      <p class="bignum" aria-label="110 hardcoded UUIDs to zero"><s>110</s><span class="arrow">→</span><span class="zero" id="countdown">0</span></p>
+      <div class="say">
+        <p>Meshery's UI checked permissions against 110 UUIDs hardcoded in a 449-line file. Every new permission meant a hand edit, and a typo failed silently.</p>
+        <p>The keys are now generated from <code>@meshery/schemas</code> and validated at compile time. Sistent's PermissionProvider and PermissionShield tell a user why a control is disabled and which role unlocks it. The organization switcher only lists orgs the user can act in.</p>
+      </div>
+    </div>
+    <ol class="graph" id="graph" data-r></ol>
+  </div>
+  <div class="else" id="else"></div>
+</section>
+
+<section id="firsts">
+  <header class="sh" data-r>
+    <p class="eyebrow">First contact</p>
+    <h2>The first PR merged into each organization.</h2>
+  </header>
+  <div class="firsts" id="firsts-list" data-r></div>
+</section>
+
+<section id="ledger">
+  <header class="sh" data-r>
+    <p class="eyebrow">gh search prs --author rishiraj38</p>
+    <h2>The full ledger.</h2>
+  </header>
+  <div data-r>
+    <div class="controls">
+      <div class="chips" id="chips" role="group" aria-label="Filter by organization"></div>
+      <input id="q" type="search" placeholder="Search titles and repos" aria-label="Search pull requests">
+    </div>
+    <div class="ledger" id="rows"></div>
+    <div class="ledger-foot">
+      <button class="more" id="more" type="button"></button>
+      <p id="asof"></p>
+    </div>
+  </div>
+</section>
+
+<div class="scene" id="scene-2" aria-hidden="true"></div>
+
+<section id="projects">
+  <header class="sh" data-r>
+    <p class="eyebrow">Projects</p>
+    <h2>Worlds I built on my own time.</h2>
+  </header>
+  <div class="projects">
+    <article data-r style="--c:#8B6CFF;--k:0">
+      <i data-planet="0" class="orb ring"></i>
+      <p class="kind">Autonomous news curation</p>
+      <h3>Helix</h3>
+      <p class="desc">Reads about 400 articles a day from 13 sources, summarises each with an LLM, ranks them against every subscriber's interests and emails a personal digest. Runs unattended on a GitHub Actions cron.</p>
+      <ul class="feat"><li>13 ingest lanes: research labs, topic bundles, keyword lanes and YouTube.</li><li>Selects 60 balanced candidates round-robin across sources; a curator agent scores each 0 to 10 per subscriber.</li><li>Publishes the day's top stories as an Instagram carousel and raises an alert when a run looks broken.</li></ul>
+      <p class="stack">Python · Groq · Next.js · Postgres · GitHub Actions</p>
+      <p class="links"><a href="https://helix-seven-eta.vercel.app">Live site</a><a href="https://github.com/rishiraj38/news-aggregator">Source</a></p>
+    </article>
+    <article data-r style="--c:#FF7AB6;--k:1;--d:1">
+      <i data-planet="1" class="orb"></i>
+      <p class="kind">Blogging platform</p>
+      <h3>InkSpire</h3>
+      <p class="desc">A serverless blogging platform with a custom rich-text editor and an AI summariser that writes summaries and titles. The API runs on Cloudflare's edge.</p>
+      <ul class="feat"><li>Hono API on Cloudflare Workers, with Prisma Accelerate over Neon Postgres.</li><li>Cloudflare AI generates summaries and titles.</li><li>React 18, Tailwind CSS v4 and Framer Motion on the front end.</li></ul>
+      <p class="stack">React · TypeScript · Hono on Cloudflare Workers · Prisma · Neon Postgres</p>
+      <p class="links"><a href="https://ink-spire-rho.vercel.app">Live site</a><a href="https://github.com/rishiraj38/blog_web">Source</a></p>
+    </article>
+    <article data-r style="--c:#5FD8FF;--k:2">
+      <i data-planet="2" class="orb"></i>
+      <p class="kind">AI interview practice</p>
+      <h3>AeroPrep</h3>
+      <p class="desc">Simulates technical interviews in a Monaco editor, parses a PDF résumé to shape the questions and gives feedback that adapts to the answers.</p>
+      <ul class="feat"><li>Next.js App Router with Prisma for type-safe server-side data.</li><li>Monaco editor for live coding rounds.</li><li>PDF résumé parsing shapes each interview.</li></ul>
+      <p class="stack">Next.js · TypeScript · Prisma · PostgreSQL · Docker</p>
+      <p class="links"><a href="https://ai-interview-coach-eight-mu.vercel.app">Live site</a><a href="https://github.com/rishiraj38/AeroPrep">Source</a></p>
+    </article>
+    <article data-r style="--c:#5BE3A1;--k:3;--d:1">
+      <i data-planet="3" class="orb ring"></i>
+      <p class="kind">Misinformation monitoring</p>
+      <h3>Veritas AI</h3>
+      <p class="desc">An agent that checks a claim against a FAISS store of 7,500+ verified fact-checks, falls back to live web search when the claim is new, and writes a structured credibility report.</p>
+      <ul class="feat"><li>Local FAISS vector store of 7,500+ verified fact-checks.</li><li>Live web search fallback for claims the store has never seen.</li><li>Outputs a structured credibility report.</li></ul>
+      <p class="stack">Python · FAISS · Groq · Gradio</p>
+      <p class="links"><a href="https://huggingface.co/spaces/rishi38/news-credibilty-agent">Live demo</a><a href="https://github.com/rishiraj38/news-credibility-agent">Source</a></p>
+    </article>
+    <article data-r style="--c:#FFB347;--k:4">
+      <i data-planet="4" class="orb"></i>
+      <p class="kind">Legal document editor</p>
+      <h3>Paginate</h3>
+      <p class="desc">A Tiptap editor with real-time A4 pagination for legal drafting. Page breaks are ProseMirror decorations, so the document stays one continuous editor and the PDF and DOCX exports match the screen.</p>
+      <ul class="feat"><li>A4 pages with 1-inch margins, updated as you type.</li><li>Breaks are visual only, so the document structure stays intact.</li><li>PDF and DOCX export.</li></ul>
+      <p class="stack">Next.js · TypeScript · Tiptap · ProseMirror</p>
+      <p class="links"><a href="https://editor-puce-eta.vercel.app">Live site</a><a href="https://github.com/rishiraj38/editor">Source</a></p>
+    </article>
+    <article data-r style="--c:#FF8A5B;--k:5;--d:1">
+      <i data-planet="5" class="orb ring"></i>
+      <p class="kind">Developer tooling</p>
+      <h3>claude-agents</h3>
+      <p class="desc">Claude Code subagents: a read-only code reviewer that judges whether a PR fixes the root cause, and an open-source contribution pipeline. Guard hooks, covered by 80 test cases, stop the agents from pushing or posting anything unapproved.</p>
+      <ul class="feat"><li>Review guard hook with 56 test cases; contribution guard with 24.</li><li>Nothing is pushed, opened or posted until that exact change is approved.</li><li>One installer links the agents into every project on the machine.</li></ul>
+      <p class="stack">Python · Claude Code · Shell</p>
+      <p class="links"><a href="https://github.com/rishiraj38/claude-agents">Source</a></p>
+    </article>
+  </div>
+  <div class="morebuilds" data-r>
+    <a href="https://usemoney-five.vercel.app"><b>UseMoney practice trading</b><span>Paper-trading dashboard and notification system for an Indian markets platform, with a full system design document.</span><i>TypeScript · Next.js · Recharts</i></a>
+    <a href="https://netflix-gpt-theta-amber.vercel.app"><b>Netflix GPT</b><span>Movie browsing app with Firebase auth, TMDB data and trailer playback.</span><i>React · Redux Toolkit · Firebase · Tailwind CSS</i></a>
+    <a href="https://news-credibility-model-app.streamlit.app/"><b>News credibility model</b><span>The classifier that came before Veritas AI, served as a Streamlit app.</span><i>Python · Streamlit</i></a>
+    <a href="https://github.com/rishiraj38/Disaster_Management_RL_ENV"><b>Emergency service RL environment</b><span>An OpenEnv reinforcement-learning environment for emergency services.</span><i>Python · OpenEnv · Docker</i></a>
+  </div>
+</section>
+
+<section>
+  <div class="duo">
+    <div id="recognition" data-r>
+      <h2>Recognition</h2>
+      <ul class="list">
+        <li><span class="ttl">CNCF LFX Mentorship, 2026 Term 2</span><span class="meta">Selected mentee · Meshery · Models Support for OCI Registries</span></li>
+        <li style="--d:1"><span class="ttl">Maintainer in the Layer5 ecosystem</span><span class="meta">Across multiple active open-source projects</span></li>
+        <li style="--d:2"><span class="ttl"><a href="https://cloud.layer5.io/user/5f456e61-75ed-4789-8c59-56cb3beb9ca2?tab=badges&amp;badge=certified-meshery-contributor">Certified Meshery Contributor</a></span><span class="meta">Badge issued by Layer5</span></li>
+        <li style="--d:3"><span class="ttl">Finalist, Meta × Hugging Face OpenEnv Hackathon</span><span class="meta">Reinforcement-learning environment for emergency services · <a href="https://github.com/rishiraj38/Disaster_Management_RL_ENV">source</a></span></li>
+        <li style="--d:4"><span class="ttl">Amazon ML Challenge 2026</span><span class="meta">Led team Demolisher · business entity resolution · 0.9846 on the round 1 leaderboard</span></li>
+      </ul>
+    </div>
+    <div id="writing" data-r style="--d:1">
+      <h2>Writing</h2>
+      <ul class="list">
+        <li><span class="ttl"><a href="https://github.com/meshery/meshery.io/pull/2850">From 110 Hardcoded UUIDs to Zero: How Meshery's Permission System Became Self-Updating</a></span><span class="meta">Blog post · meshery.io · <span class="pill">in review</span></span></li>
+        <li style="--d:1"><span class="ttl"><a href="https://github.com/meshery/meshery/pull/19620">Permission key guide</a></span><span class="meta">Contributor documentation · Meshery Docs · merged Jul 2026</span></li>
+        <li style="--d:2"><span class="ttl"><a href="https://github.com/layer5io/layer5/pull/7961">PermissionShield component</a></span><span class="meta">Design-system documentation · Sistent · merged Aug 2026</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="toolkit">
+  <header class="sh" data-r>
+    <p class="eyebrow">Toolkit</p>
+    <h2>What I fly with.</h2>
+  </header>
+  <div id="constellation"></div>
+  <div class="belts" data-r>
+    <div class="belt" style="--t:46s" data-items="TypeScript|JavaScript|Go|Python|React|Next.js|Redux Toolkit|Tailwind CSS|Framer Motion"></div>
+    <div class="belt rev" style="--t:54s" data-items="Node.js|Express|Hono|Prisma|PostgreSQL|MySQL|MongoDB|Redis|Pandas|NumPy|scikit-learn|TensorFlow"></div>
+    <div class="belt" style="--t:40s" data-items="Docker|Kubernetes|OCI|ORAS|Cloudflare Workers|AWS|GitHub Actions|Git|Jest"></div>
+  </div>
+</section>
+<div class="scene" id="scene-3" aria-hidden="true"></div>
+</main>
+
+<div class="contact" id="contact">
+  <p class="eyebrow" style="margin-bottom:20px" data-r>Contact</p>
+  <h2 data-r>Open to internships and good issues.</h2>
+  <div class="mail" data-r>
+    <span class="addr" id="addr">rishiraj438gt@gmail.com</span>
+    <button type="button" id="copy">Copy address</button>
+  </div>
+  <p class="socials" data-r>
+    <a href="https://github.com/rishiraj38">GitHub</a>
+    <a href="https://www.linkedin.com/in/rishi-raj-3488432ab">LinkedIn</a>
+    <a href="https://leetcode.com/rishiraj438">LeetCode</a>
+  </p>
+  <div class="horizon" aria-hidden="true"></div>
+</div>
+
+<footer>
+  <span>Rishi Raj · Newton School of Technology</span>
+  <span>Imagery: NASA, ESA/Hubble, ESO / S. Brunier. Planet textures © Solar System Scope, CC BY 4.0</span>
+  <span id="foot-date"></span>
+</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const PRS = __DATA__;
+const META = __META__;
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+const url = (p) => `https://github.com/${p.r}/pull/${p.n}`;
+const orgOf = (p) => p.r.split('/')[0];
+const merged = PRS.filter((p) => p.s === 'm');
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtDate = (d) => { const [y, m, day] = d.split('-'); return `${+day} ${MONTHS[+m - 1]} ${y}`; };
+const STILL = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TAU = Math.PI * 2;
+
+/* name: one span per letter so each can rise in */
+(function () {
+  const h = $('#name'); const words = h.textContent.split(' '); h.textContent = ''; let i = 0;
+  words.forEach((w) => { const ws = el('span', 'w'); ws.setAttribute('aria-hidden', 'true'); [...w].forEach((ch) => { const l = el('span', 'l', ch); l.style.setProperty('--i', i++); ws.append(l); }); h.append(ws); });
+})();
+
+/* hero figures count up */
+function countTo(node, to, ms, from = 0) {
+  if (STILL) { node.textContent = to.toLocaleString('en-US'); return; }
+  const t0 = performance.now();
+  (function step(now) {
+    const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 4);
+    node.textContent = Math.round(from + (to - from) * e).toLocaleString('en-US');
+    if (k < 1) requestAnimationFrame(step);
+  })(t0);
+}
+countTo($('#s-merged'), merged.length, 1800);
+countTo($('#s-repos'), new Set(merged.map((p) => p.r)).size, 1800);
+countTo($('#s-orgs'), new Set(merged.map(orgOf)).size, 1800);
+countTo($('#s-reviewed'), META.reviewed, 2200);
+countTo($('#s-contrib'), META.contributions, 2600);
+$('#asof').textContent = `Pulled from the GitHub API on ${fmtDate(META.asOf)}.`;
+$('#foot-date').textContent = `Updated ${fmtDate(META.asOf)}`;
+
+/* starfield behind everything */
+(function () {
+  const cv = $('#stars'), ctx = cv.getContext('2d');
+  let W, H, dpr, stars = [], shots = [], mx = 0, my = 0, lastY = scrollY, vel = 0, born = performance.now();
+  function size() {
+    dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.round(W * H / 4200);
+    stars = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, z: .15 + Math.random() * .85, p: Math.random() * TAU, s: .6 + Math.random() * 2.2, h: Math.random() }));
+  }
+  function frame(t) {
+    ctx.clearRect(0, 0, W, H);
+    const sy = scrollY; vel += ((sy - lastY) - vel) * .18; lastY = sy; if (STILL) born = -1e9;
+    for (const s of stars) {
+      const y = (((s.y - sy * s.z * .22 + my * s.z * 14) % H) + H) % H;
+      const x = (((s.x + mx * s.z * 14 + t * .004 * s.z) % W) + W) % W;
+      const a = .35 + .65 * Math.abs(Math.sin(t * .0012 * s.s + s.p));
+      ctx.globalAlpha = a * s.z;
+      ctx.fillStyle = s.h < .12 ? '#FFD9A0' : s.h < .3 ? '#9FE6FF' : '#FFFFFF';
+      const jump = Math.max(0, 1 - (t - born) / 1700);   // hyperspace on arrival
+      if (jump > 0 || Math.abs(vel) > 1.5) {
+        const dx = x - W / 2, dy = y - H / 2, dl = Math.hypot(dx, dy) || 1, k = jump * jump * 260 * s.z;
+        ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = s.z * 1.5;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + dx / dl * k, y + dy / dl * k + vel * s.z * 1.6); ctx.stroke();
+      } else { ctx.beginPath(); ctx.arc(x, y, s.z * 1.35, 0, TAU); ctx.fill(); }
+    }
+    if (!STILL && Math.random() < .012 && shots.length < 3) shots.push({ x: Math.random() * W * 1.2, y: -20, v: 9 + Math.random() * 7, life: 1 });
+    shots = shots.filter((s) => s.life > 0);
+    for (const s of shots) {
+      s.x -= s.v; s.y += s.v * .55; s.life -= .012;
+      const g = ctx.createLinearGradient(s.x, s.y, s.x + 130, s.y - 72);
+      g.addColorStop(0, `rgba(255,255,255,${s.life})`); g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x + 130, s.y - 72); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    if (!STILL && !document.hidden) requestAnimationFrame(frame);
+  }
+  addEventListener('resize', size);
+  addEventListener('pointermove', (e) => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !STILL) requestAnimationFrame(frame); });
+  size(); requestAnimationFrame(frame);
+})();
+
+/* light that follows the pointer */
+addEventListener('pointermove', (e) => { const g = $('#glow'); g.style.opacity = 1; g.style.transform = `translate3d(${e.clientX}px,${e.clientY}px,0)`; });
+
+/* scroll progress */
+addEventListener('scroll', () => {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  $('#progress').style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+}, { passive: true });
+
+/* the solar system: sun = Rishi, planet = organization, moon = merged PR */
+const ORGS = (function () {
+  const m = new Map();
+  merged.forEach((p) => m.set(orgOf(p), (m.get(orgOf(p)) || 0) + 1));
+  return [...m.entries()].sort((a, b) => b[1] - a[1]).map(([name, n]) => ({ name, n }));
+})();
+let pickOrg = () => {};
+window.SPACE = { PRS, META, ORGS, merged, STILL, use3D: false, pickOrg: (name) => pickOrg(name) };
+(function () {
+  const cv = $('#system'), ctx = cv.getContext('2d');
+  const HUES = ['#8B6CFF', '#5FD8FF', '#FF7AB6', '#5BE3A1', '#FFC857', '#FF8A5B', '#B99BFF', '#7FA8FF', '#F6A6FF', '#9BE564', '#FFD6A5', '#6FE3D6', '#D9D6FF'];
+  let W, H, dpr, cx, cy, ky, planets = [], belt = [], amax = 0, hover = null, speed = 1, clock = 0, last = 0, pointer = null;
+
+  function layout() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = Math.round(Math.max(400, Math.min(W * .66, 860)));
+    cv.style.height = H + 'px'; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx = W / 2; cy = H / 2;
+    const small = W < 640, sunR = small ? 24 : 54;
+    const aMin = sunR + (small ? 28 : 70), aMax = Math.max(aMin + 40, W / 2 - (small ? 16 : 120));
+    ky = Math.max(.12, Math.min(.5, (H / 2 - 34) / aMax)); amax = aMax;
+    const mid = aMin + (aMax - aMin) * .46;
+    belt = Array.from({ length: small ? 90 : 260 }, () => ({ a: mid + (Math.random() - .5) * (small ? 14 : 34), ph: Math.random() * TAU, w: .05 + Math.random() * .03, s: .5 + Math.random() * 1.1 }));
+    planets = ORGS.map((o, i) => {
+      const a = aMin + (aMax - aMin) * (ORGS.length === 1 ? 0 : i / (ORGS.length - 1));
+      const r = (small ? 3 : 7) + Math.sqrt(o.n) * (small ? 1.6 : 3.3);
+      const prev = planets[i];
+      return {
+        ...o, a, r, sunR, color: HUES[i % HUES.length],
+        w: .42 * Math.pow(aMin / a, 1.5) + .035,            // Kepler: outer planets move slower
+        th: prev ? prev.th : i * 2.39996,
+        moons: Array.from({ length: o.n }, (_, k) => ({ d: r + 5 + (k % 3) * 3.5 + Math.random() * 2, ph: (k / o.n) * TAU + Math.random() * .4, w: 1.1 + Math.random() * 1.2 })),
+        label: !small || i < 3,
+      };
+    });
+  }
+
+  function sun(t, r) {
+    const pulse = 1 + Math.sin(t * 1.6) * .05;
+    for (const [k, a] of [[5.2, .10], [3.1, .22], [1.9, .5]]) {
+      const g = ctx.createRadialGradient(cx, cy, r * .4, cx, cy, r * k * pulse);
+      g.addColorStop(0, `rgba(255,190,90,${a})`); g.addColorStop(1, 'rgba(255,150,60,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r * k * pulse, 0, TAU); ctx.fill();
+    }
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * .12);
+    ctx.strokeStyle = 'rgba(255,214,140,.35)'; ctx.lineWidth = 1.2;
+    for (let i = 0; i < 18; i++) { ctx.rotate(TAU / 18); const len = r * (1.5 + .35 * Math.sin(t * 2 + i * 1.7)); ctx.beginPath(); ctx.moveTo(r * 1.12, 0); ctx.lineTo(len, 0); ctx.stroke(); }
+    ctx.restore();
+    const g = ctx.createRadialGradient(cx - r * .3, cy - r * .3, r * .1, cx, cy, r);
+    g.addColorStop(0, '#FFF6DC'); g.addColorStop(.5, '#FFB347'); g.addColorStop(1, '#E0661C');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r * pulse, 0, TAU); ctx.fill();
+  }
+
+  function planet(p, t) {
+    const hot = hover === p, r = p.r * (hot ? 1.25 : 1);
+    // moons behind, body, moons in front
+    const moons = p.moons.map((m) => { const a = m.ph + t * m.w; return { x: p.x + Math.cos(a) * m.d * (hot ? 1.25 : 1), y: p.y + Math.sin(a) * m.d * .45 * (hot ? 1.25 : 1), back: Math.sin(a) < 0 }; });
+    const dots = (back) => { ctx.fillStyle = hot ? '#fff' : 'rgba(235,232,255,.82)'; for (const m of moons) if (m.back === back) { ctx.beginPath(); ctx.arc(m.x, m.y, 1.25, 0, TAU); ctx.fill(); } };
+    dots(true);
+    const halo = ctx.createRadialGradient(p.x, p.y, r * .6, p.x, p.y, r * 2.8);
+    halo.addColorStop(0, p.color + '55'); halo.addColorStop(1, p.color + '00');
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(p.x, p.y, r * 2.8, 0, TAU); ctx.fill();
+    // lit side faces the sun
+    const dx = cx - p.x, dy = cy - p.y, dl = Math.hypot(dx, dy) || 1;
+    const g = ctx.createRadialGradient(p.x + dx / dl * r * .45, p.y + dy / dl * r * .45, r * .1, p.x, p.y, r * 1.05);
+    g.addColorStop(0, '#FFFFFF'); g.addColorStop(.28, p.color); g.addColorStop(1, '#07061A');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, TAU); ctx.fill();
+    dots(false);
+    if (p.label || hot) {
+      const right = p.x < W - 150; ctx.textAlign = right ? 'left' : 'right';
+      const lx = p.x + (right ? 1 : -1) * (r + 20);
+      ctx.font = `500 ${hot ? 13 : 11.5}px "JetBrains Mono", monospace`; ctx.fillStyle = hot ? '#fff' : 'rgba(238,236,255,.9)';
+      ctx.fillText(p.name, lx, p.y - 2);
+      ctx.font = '10.5px "JetBrains Mono", monospace'; ctx.fillStyle = p.color;
+      ctx.fillText(`${p.n} merged`, lx, p.y + 12);
+    }
+  }
+
+  function frame(now) {
+    const dt = Math.min(.05, (now - last) / 1000 || 0); last = now;
+    speed += ((hover ? .08 : 1) - speed) * .08; clock += dt * speed;
+    ctx.clearRect(0, 0, W, H);
+    planets.forEach((p) => {
+      p.ang = p.th + clock * p.w; p.x = cx + Math.cos(p.ang) * p.a; p.y = cy + Math.sin(p.ang) * p.a * ky;
+      ctx.strokeStyle = hover === p ? p.color : 'rgba(190,185,255,.13)'; ctx.lineWidth = hover === p ? 1.4 : 1;
+      ctx.beginPath(); ctx.ellipse(cx, cy, p.a, p.a * ky, 0, 0, TAU); ctx.stroke();
+      // comet-like trail along the orbit
+      ctx.strokeStyle = p.color + '66'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(cx, cy, p.a, p.a * ky, 0, p.ang - .55, p.ang); ctx.stroke();
+    });
+    ctx.fillStyle = 'rgba(214,208,255,.55)';
+    for (const b of belt) { const a = b.ph + clock * b.w; ctx.beginPath(); ctx.arc(cx + Math.cos(a) * b.a, cy + Math.sin(a) * b.a * ky, b.s, 0, TAU); ctx.fill(); }
+    // a comet on a long tilted orbit, tail pointing away from the sun
+    { const u = clock * .22, ex = Math.cos(u) * amax * 1.04, ey = Math.sin(u) * amax * ky * .38, c = Math.cos(-.42), sn = Math.sin(-.42);
+      const kx = cx + ex * c - ey * sn, kyy = cy + ex * sn + ey * c, dx = kx - cx, dy = kyy - cy, dl = Math.hypot(dx, dy) || 1, len = 60 + 9000 / dl;
+      const g = ctx.createLinearGradient(kx, kyy, kx + dx / dl * len, kyy + dy / dl * len);
+      g.addColorStop(0, 'rgba(160,235,255,.95)'); g.addColorStop(1, 'rgba(160,235,255,0)');
+      ctx.strokeStyle = g; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(kx, kyy); ctx.lineTo(kx + dx / dl * len, kyy + dy / dl * len); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(kx, kyy, 2.6, 0, TAU); ctx.fill(); ctx.lineCap = 'butt'; }
+    const order = [...planets].sort((a, b) => a.y - b.y);
+    order.filter((p) => p.y < cy).forEach((p) => planet(p, clock));
+    sun(now / 1000, planets[0] ? planets[0].sunR : 30);
+    order.filter((p) => p.y >= cy).forEach((p) => planet(p, clock));
+    if (pointer) pick(pointer.x, pointer.y);
+    if (!STILL && !document.hidden && !window.SPACE.use3D) requestAnimationFrame(frame);
+  }
+
+  function pick(x, y) {
+    let best = null, bd = 1e9;
+    for (const p of planets) { const d = Math.hypot(p.x - x, p.y - y) - p.r; if (d < 16 && d < bd) { best = p; bd = d; } }
+    hover = best; cv.style.cursor = best ? 'pointer' : 'default';
+  }
+  const local = (e) => { const b = cv.getBoundingClientRect(); return { x: e.clientX - b.left, y: e.clientY - b.top }; };
+  cv.addEventListener('pointermove', (e) => { pointer = local(e); pick(pointer.x, pointer.y); if (STILL) frame(performance.now()); });
+  cv.addEventListener('pointerleave', () => { pointer = null; hover = null; cv.style.cursor = 'default'; });
+  cv.addEventListener('click', (e) => { const q = local(e); pick(q.x, q.y); if (hover) pickOrg(hover.name); });
+  addEventListener('resize', () => { layout(); if (STILL) frame(performance.now()); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !STILL) { last = performance.now(); requestAnimationFrame(frame); } });
+  layout(); last = performance.now(); requestAnimationFrame(frame);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (STILL) frame(performance.now()); });
+})();
+
+/* case study commits */
+const find = (r, n) => PRS.find((p) => p.r === r && p.n === n);
+const plain = (t) => { const x = t.trim().replace(/^(\[[^\]]+\]|gh-\d+:|\w+(\([^)]*\))?:)\s*/, ''); return x.charAt(0).toUpperCase() + x.slice(1); };
+[['meshery/schemas', 974], ['meshery/meshery', 20354], ['layer5io/sistent', 1686], ['layer5io/sistent', 1704], ['meshery/meshery', 20590],
+ ['meshery/meshery', 20697], ['meshery/meshery', 20860], ['layer5io/sistent', 1793], ['meshery/meshery', 21366]].forEach(([r, n], i) => {
+  const p = find(r, n); if (!p) return;
+  const li = el('li'), a = el('a'); li.style.setProperty('--d', i);
+  a.href = url(p); a.target = '_blank'; a.rel = 'noopener';
+  a.append(el('span', 'ref', `${p.r} #${p.n} · ${fmtDate(p.d)}`), el('span', 'ttl', plain(p.t)));
+  li.append(a); $('#graph').append(li);
+});
+
+/* beyond Meshery */
+[['python/cpython', 157898], ['kubernetes/minikube', 23663], ['open-telemetry/opentelemetry-collector-releases', 1679], ['learningequality/kolibri', 15434],
+ ['c2siorg/imagelab', 375], ['c2siorg/tensormap', 416], ['openfoodfacts/openfoodfacts-webcomponents', 646], ['Submitty/Submitty', 13374]].forEach(([r, n], i) => {
+  const p = find(r, n); if (!p) return;
+  const a = el('a'); a.href = url(p); a.target = '_blank'; a.rel = 'noopener';
+  a.dataset.r = ''; a.style.setProperty('--d', i % 2);
+  a.append(el('span', 'repo', p.r), el('span', 'what', plain(p.t)), el('span', 'when', `#${p.n} · merged ${fmtDate(p.d)}`));
+  $('#else').append(a);
+});
+
+/* first contact: earliest merged PR per organization */
+(function () {
+  const first = new Map();
+  [...merged].sort((a, b) => a.d.localeCompare(b.d)).forEach((p) => { if (!first.has(orgOf(p))) first.set(orgOf(p), p); });
+  [...first.values()].forEach((p) => {
+    const a = el('a'); a.href = url(p); a.target = '_blank'; a.rel = 'noopener';
+    a.append(el('span', 'when', fmtDate(p.d)), el('span', 'org', p.r), el('span', 'what', plain(p.t)));
+    $('#firsts-list').append(a);
+  });
+  const open = PRS.filter((p) => p.s === 'o'), orgs = [...new Set(open.map(orgOf))];
+  $('#now-in').textContent = `${open.length} open pull requests across ${orgs.length} organizations, including ${orgs.slice(0, 4).join(', ')}`;
+})();
+
+/* ledger */
+const state = { org: 'all', q: '', all: false };
+const sorted = [...PRS].sort((a, b) => b.d.localeCompare(a.d));
+const chipDefs = [{ key: 'all', label: 'all' }, ...ORGS.map((o) => ({ key: o.name, label: o.name })), { key: 'open', label: 'open' }];
+const inChip = (p, key) => key === 'all' || (key === 'open' ? p.s === 'o' : orgOf(p) === key);
+const PAGE = 12;
+function renderChips() {
+  const box = $('#chips'); box.textContent = '';
+  chipDefs.forEach((c) => {
+    const b = el('button', '', c.label); b.type = 'button';
+    b.setAttribute('aria-pressed', String(state.org === c.key));
+    b.append(el('span', '', String(PRS.filter((p) => inChip(p, c.key)).length)));
+    b.addEventListener('click', () => { state.org = c.key; state.all = false; renderChips(); renderRows(); });
+    box.append(b);
+  });
+}
+function renderRows() {
+  const q = state.q.trim().toLowerCase();
+  const list = sorted.filter((p) => inChip(p, state.org) && (!q || (p.t + ' ' + p.r + ' ' + p.n).toLowerCase().includes(q)));
+  const box = $('#rows'); box.textContent = '';
+  const shown = state.all || q ? list : list.slice(0, PAGE);
+  shown.forEach((p, i) => {
+    const a = el('a'); a.href = url(p); a.target = '_blank'; a.rel = 'noopener'; a.style.setProperty('--d', Math.min(i, 24));
+    a.append(el('span', 'd', p.d), el('span', 'r', p.r), el('span', 't', p.t.trim()), el('span', 'n' + (p.s === 'o' ? ' open' : ''), `#${p.n}${p.s === 'o' ? ' open' : ''}`));
+    box.append(a);
+  });
+  if (!list.length) box.append(el('p', 'empty', 'No pull requests match that search.'));
+  const more = $('#more');
+  more.hidden = list.length <= PAGE || !!q;
+  more.textContent = state.all ? 'Show fewer' : `Show all ${list.length}`;
+}
+$('#more').addEventListener('click', () => { state.all = !state.all; renderRows(); });
+$('#q').addEventListener('input', (e) => { state.q = e.target.value; renderRows(); });
+pickOrg = (name) => { state.org = name; state.all = false; renderChips(); renderRows(); $('#ledger').scrollIntoView({ behavior: STILL ? 'auto' : 'smooth' }); };
+renderChips(); renderRows();
+
+/* toolkit belts: duplicate each row so the loop is seamless */
+document.querySelectorAll('.belt').forEach((b) => {
+  const items = b.dataset.items.split('|');
+  [0, 1].forEach((pass) => items.forEach((t) => { const s = el('span', '', t); if (pass) s.setAttribute('aria-hidden', 'true'); b.append(s); }));
+});
+
+/* reveal on scroll, 110 → 0 countdown, project tilt */
+if (!STILL && 'IntersectionObserver' in window) {
+  document.documentElement.classList.add('anim');
+  const graph = $('#graph'); graph.style.setProperty('--grow', 0);
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in'); io.unobserve(e.target);
+    if (e.target === graph) graph.style.setProperty('--grow', 1);
+    if (e.target.querySelector && e.target.querySelector('#countdown')) countTo($('#countdown'), 0, 2200, 110);
+  }), { rootMargin: '0px 0px -8% 0px', threshold: .08 });
+  document.querySelectorAll('[data-r]').forEach((n) => io.observe(n));
+  document.querySelectorAll('.projects article').forEach((card) => {
+    card.addEventListener('pointermove', (e) => {
+      const b = card.getBoundingClientRect(), x = (e.clientX - b.left) / b.width - .5, y = (e.clientY - b.top) / b.height - .5;
+      card.style.transform = `perspective(900px) rotateY(${x * 9}deg) rotateX(${-y * 9}deg) translateY(-6px)`;
+    });
+    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+  });
+}
+
+/* copy email */
+$('#copy').addEventListener('click', async () => {
+  const btn = $('#copy'), addr = $('#addr');
+  try { await navigator.clipboard.writeText(addr.textContent); btn.textContent = 'Copied'; }
+  catch { const r = document.createRange(); r.selectNodeContents(addr); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); btn.textContent = 'Selected, press copy'; }
+  setTimeout(() => { btn.textContent = 'Copy address'; }, 1800);
+});
+</script>
+__FX__

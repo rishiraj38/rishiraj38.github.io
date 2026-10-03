@@ -1,0 +1,32 @@
+/* the 3D solar system (fx/hero3d.js renders into #system3d and hides the 2D canvas) */
+#system3d{position:relative;width:100%;height:clamp(440px,86vh,940px);overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;
+  -webkit-mask-image:linear-gradient(transparent,#000 9%,#000 90%,transparent);mask-image:linear-gradient(transparent,#000 9%,#000 90%,transparent);
+  animation:h3d-in 1.4s ease both}
+#system3d[hidden]{display:none}
+#system3d.drag{cursor:grabbing}
+#system3d.hot{cursor:pointer}
+#system3d canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;outline:0}
+@keyframes h3d-in{from{opacity:0}}
+
+/* labels are real buttons, so the planets are reachable from the keyboard too */
+.h3d-labels{position:absolute;inset:0;pointer-events:none}
+.h3d-label{position:absolute;left:0;top:0;margin:0;padding:5px 8px 5px 24px;border:0;background:none;font-family:var(--mono);font-size:.72rem;line-height:1.3;color:var(--ink);text-align:left;white-space:nowrap;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .35s;will-change:transform;text-shadow:0 0 10px var(--space),0 1px 3px var(--space)}
+.h3d-label::before{content:"";position:absolute;left:5px;top:50%;width:13px;height:1px;background:var(--c,var(--ice));opacity:.75}
+.h3d-label.flip{padding:5px 24px 5px 8px;text-align:right}
+.h3d-label.flip::before{left:auto;right:5px}
+.h3d-label b{display:block;font-weight:500;letter-spacing:.01em}
+.h3d-label span{display:block;font-size:.64rem;color:var(--c,var(--ice))}
+.h3d-label.on{opacity:.9;pointer-events:auto}
+.h3d-label.hot,.h3d-label:focus-visible{opacity:1;pointer-events:auto}
+.h3d-label.hot b{color:#fff;text-shadow:0 0 14px var(--c,var(--ice)),0 1px 3px var(--space)}
+.h3d-label.gone:not(:focus-visible){opacity:0;pointer-events:none}
+
+.h3d-hint{position:absolute;right:var(--gutter,20px);bottom:11%;margin:0;font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);opacity:.7;pointer-events:none}
+
+@media (max-width:640px){
+  #system3d{height:clamp(420px,118vw,74vh)}
+  .h3d-label{font-size:.66rem;padding-left:18px}
+  .h3d-label.flip{padding-right:18px}
+  .h3d-label::before{width:9px}
+  .h3d-hint{left:0;right:0;text-align:center;bottom:9%}
+}
