@@ -406,7 +406,7 @@
       if (!gpu || /webkit webgl/i.test(gpu)) { const ext = gl.getExtension('WEBGL_debug_renderer_info'); if (ext) gpu = String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || ''); }
     } catch (e) { gpu = ''; }
     const SOFT = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu);
-    const BUDGET = SOFT ? .8e6 : 3.2e6, EVERY = SOFT ? 4 : 1;
+    const BUDGET = SOFT ? .8e6 : 7e6, EVERY = SOFT ? 4 : 1;
 
     const renderer = new T.WebGLRenderer({ canvas, context: gl, alpha: true, antialias: true, premultipliedAlpha: true });
     renderer.setClearColor(0x000000, 0);
@@ -533,6 +533,21 @@
     tex('earth-day.jpg', (t) => { earthMat.uniforms.tDay.value = t; got(); });
     tex('earth-night.jpg', (t) => { earthMat.uniforms.tNight.value = t; got(); });
     tex('earth-clouds.jpg', (t) => { earthMat.uniforms.tClouds.value = t; got(); });
+    // sharper maps for large screens: swapped in once the section is near, so phones and short visits never download them
+    const HD = !SOFT && innerWidth >= 900 && renderer.capabilities.maxTextureSize >= 8192;
+    const upgrade = (file, uniform) => loader.load(DIR + file, (t) => {
+      if (dead) { t.dispose(); return; }
+      t.anisotropy = renderer.capabilities.getMaxAnisotropy(); t.wrapS = T.RepeatWrapping;
+      const old = uniform.value; uniform.value = t; if (old) old.dispose(); wake();
+    }, undefined, () => {});
+    if (HD && 'IntersectionObserver' in window) {
+      const near = new IntersectionObserver((es) => {
+        if (!es.some((e) => e.isIntersecting)) return;
+        near.disconnect();
+        upgrade('earth-day-hd.jpg', earthMat.uniforms.tDay); upgrade('earth-night-hd.jpg', earthMat.uniforms.tNight); upgrade('earth-clouds-hd.jpg', earthMat.uniforms.tClouds);
+      }, { rootMargin: '1800px 0px' });
+      near.observe(host);
+    }
     loader.load(DIR + 'moon.jpg', (t) => { moon.material.map = t; moon.material.needsUpdate = true; moon.visible = true; wake(); }, undefined, () => {});
     loader.load(DIR + 'iss.png', (t) => { iss.material.map = t; iss.material.needsUpdate = true; iss.userData.ratio = t.image.height / t.image.width; iss.visible = true; wake(); }, undefined, () => {});
 

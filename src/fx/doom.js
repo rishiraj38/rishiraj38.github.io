@@ -1,4 +1,4 @@
-/* Hidden singularity button. Pressing it (or typing "boom") scrolls to the page's own black hole, flies the
+/* Singularity button (bottom-left, labelled "do not press"). Pressing it (or typing "boom") scrolls to the page's own black hole, flies the
    camera into it while everything else on the page is pulled in, holds on black, then a big bang rebuilds
    the page. Esc skips. Without WebGL (or with reduced motion) a drawn black hole stands in. */
 (function () {

@@ -13,3 +13,5 @@ All files were resized and recompressed for the web; none are used at their orig
 
 Licence text for CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 NASA media usage guidelines: https://www.nasa.gov/nasa-brand-center/images-and-media/
+
+`earth-day-hd.jpg`, `earth-night-hd.jpg` (8192×4096) and `earth-clouds-hd.jpg` (4096×2048): Solar System Scope 8k Earth day, night and cloud maps (https://www.solarsystemscope.com/textures/), CC BY 4.0, recompressed. Loaded on large screens only.
