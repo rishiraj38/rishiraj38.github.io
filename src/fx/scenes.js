@@ -113,7 +113,7 @@ precision highp float;
 precision mediump float;
 #endif
 uniform vec2 uRes; uniform float uTime; uniform vec2 uPtr; uniform float uScroll;
-uniform sampler2D uSky; uniform float uHasSky;
+uniform sampler2D uSky; uniform float uHasSky; uniform float uDive;
 const float PI = 3.14159265;
 const float RIN = 2.0, ROUT = 9.0;
 
@@ -186,7 +186,8 @@ void main(){
   // camera: slow orbit, pointer nudges azimuth/elevation, scroll changes inclination
   float az = uTime*.012 + uPtr.x*.24;
   float elv = mix(.05,.27,uScroll) - uPtr.y*.07;
-  vec3 ro = 15.*vec3(cos(elv)*sin(az), sin(elv), cos(elv)*cos(az));
+  // uDive (0..1) flies the camera into the hole: used by the hidden singularity sequence
+  vec3 ro = mix(15., 1.12, uDive)*vec3(cos(elv)*sin(az), sin(elv), cos(elv)*cos(az));
   vec3 fw = normalize(-ro), rt = normalize(cross(fw,vec3(0.,1.,0.))), up = cross(rt,fw);
   vec3 rd = normalize(fw*1.18 + rt*uv.x + up*uv.y);
 
@@ -236,7 +237,7 @@ void main(){
       const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);   // one big triangle
       const a = gl.getAttribLocation(prog, 'a'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0);
-      for (const n of ['uRes', 'uTime', 'uPtr', 'uScroll', 'uSky', 'uHasSky']) U[n] = gl.getUniformLocation(prog, n);
+      for (const n of ['uRes', 'uTime', 'uPtr', 'uScroll', 'uSky', 'uHasSky', 'uDive']) U[n] = gl.getUniformLocation(prog, n);
       // 1×1 black placeholder until (or unless) the Milky Way photo is usable as a texture
       const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
@@ -266,7 +267,9 @@ void main(){
     function draw(t, p) {
       if (lost) return;
       gl.uniform2f(U.uRes, cv.width, cv.height);
-      gl.uniform1f(U.uTime, t);
+      const dive = (window.SPACE && window.SPACE.dive) || 0;
+      gl.uniform1f(U.uTime, t + dive * dive * 60);       // the disk spins up as the camera falls in
+      gl.uniform1f(U.uDive, dive);
       gl.uniform2f(U.uPtr, ptr.sx, ptr.sy);
       gl.uniform1f(U.uScroll, p);
       gl.uniform1f(U.uHasSky, hasSky);
