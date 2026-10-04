@@ -1,0 +1,11 @@
+/* visitor counter: a small telemetry window in the footer */
+.seen{flex:1 1 100%;display:flex;justify-content:center;padding-bottom:18px}
+.seen-box{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;border:1px solid var(--rule);border-radius:14px;background:rgba(6,6,12,.72);backdrop-filter:blur(8px);overflow:hidden}
+.seen-box>div{display:grid;gap:2px;padding:12px 22px;text-align:center;min-width:128px}
+.seen-box>div+div{border-left:1px solid var(--rule)}
+.seen-box b{font-family:var(--display);font-weight:600;font-size:1.5rem;letter-spacing:-.03em;color:var(--sun);font-variant-numeric:tabular-nums;line-height:1.1}
+.seen-box span{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.seen-box .live{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--aurora)}
+.seen-box .live::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--aurora);animation:seen-ping 1.8s ease-out infinite}
+@keyframes seen-ping{0%{box-shadow:0 0 0 0 rgba(91,227,161,.7)}100%{box-shadow:0 0 0 10px rgba(91,227,161,0)}}
+@media (prefers-reduced-motion:reduce){.seen-box .live::before{animation:none}}
